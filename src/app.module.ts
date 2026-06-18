@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { PamBotModule } from './modules/pambot/pambot.module';
+import { ScoreModule } from './modules/score/score.module';
 
 @Module({
   imports: [
@@ -8,6 +9,7 @@ import { PamBotModule } from './modules/pambot/pambot.module';
       isGlobal: true,
     }),
     PamBotModule,
+    ScoreModule,
   ],
 })
 export class AppModule {}
