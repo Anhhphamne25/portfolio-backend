@@ -30,7 +30,7 @@ async function bootstrap() {
     .setDescription('API Gateway for Portfolio AI Services')
     .setVersion('1.0')
     .addTag('PamBot')
-    .addTag('Grader')
+    .addTag('Score')
     .addTag('Problem Generator')
     .build();
 
