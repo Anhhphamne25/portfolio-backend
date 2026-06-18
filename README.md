@@ -1,98 +1,136 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Portfolio Backend
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+Portfolio Backend is a NestJS API gateway for a portfolio platform. It orchestrates three AI-oriented features: code scoring, coding problem generation, and a chat-style assistant. The service exposes a small, validation-safe HTTP surface and publishes Swagger documentation for local exploration.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## System Overview
 
-## Description
+The application is structured as a modular NestJS backend:
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+- `PamBot` handles question-and-answer requests to an external AI assistant.
+- `Score` grades submitted code against a problem statement and a sample solution.
+- `Problem Generator` creates programming exercises from a topic, difficulty, and language.
+- `shared/http` contains the HTTP client layer used to talk to external AI services.
 
-## Project setup
+At runtime, the app:
+
+- loads environment variables through `@nestjs/config`
+- enables CORS
+- applies a global validation pipe with whitelist and non-whitelisted rejection
+- serves all routes under the `/api` prefix
+- exposes Swagger at `/api/docs`
+
+## Requirements
+
+- Node.js 18 or newer
+- Yarn or npm
+
+## Installation
 
 ```bash
-$ yarn install
+yarn install
 ```
 
-## Compile and run the project
+## Environment Configuration
+
+Create a `.env` file from `env.example` and set the external service credentials:
+
+```env
+SCORE_API="https://api.score.dev/v1"
+SCORE_API_KEY="your_score_api_key_here"
+
+PAMBOT_API="https://api.pambot.dev/v1"
+PAMBOT_API_KEY="your_pambot_api_key_here"
+
+GEN_PROBLEM_API="https://api.genproblem.dev/v1"
+GEN_PROBLEM_API_KEY="your_gen_problem_api_key_here"
+```
+
+If `port` is not defined in the environment, the app defaults to `3001`.
+
+## Running the App
 
 ```bash
 # development
-$ yarn run start
+yarn start:dev
 
-# watch mode
-$ yarn run start:dev
-
-# production mode
-$ yarn run start:prod
+# production
+yarn start:prod
 ```
 
-## Run tests
+## Quality Checks
 
 ```bash
 # unit tests
-$ yarn run test
+yarn test
 
 # e2e tests
-$ yarn run test:e2e
+yarn test:e2e
 
-# test coverage
-$ yarn run test:cov
+# coverage
+yarn test:cov
+
+# lint
+yarn lint
 ```
 
-## Deployment
+## API Reference
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+All routes are prefixed with `/api`.
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+### PamBot
 
-```bash
-$ yarn install -g @nestjs/mau
-$ mau deploy
+```http
+POST /api/pambot/ask
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+Request body:
 
-## Resources
+```json
+{
+  "question": "Explain the difference between let and const in TypeScript"
+}
+```
 
-Check out a few resources that may come in handy when working with NestJS:
+### Score
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+```http
+POST /api/score/grade
+```
 
-## Support
+Request body:
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+```json
+{
+  "problem": "Write a function that returns the sum of two integers a and b.",
+  "student_code": "def add(a, b):\n    return a + b",
+  "sample_code": "def add(a, b):\n    return a + b"
+}
+```
 
-## Stay in touch
+### Problem Generator
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+```http
+POST /api/problem-generator/generate
+```
+
+Request body:
+
+```json
+{
+  "topic": "array",
+  "difficulty": "easy",
+  "language": "Python"
+}
+```
+
+## Swagger
+
+When the app is running locally, open:
+
+```text
+http://localhost:3001/api/docs
+```
 
 ## License
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+UNLICENSED
